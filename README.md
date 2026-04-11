@@ -4,6 +4,10 @@ Questo programma simula l'interazione di un utente con un distributore automatic
 
 
 
+\-Gli articoli sono rappresentati da oggetti all'interno del codice. Per gestire gli articoli del distributore è sufficiente operare sul "pannello degli oggetti".
+
+
+
 ###### Come avviare il programma:
 
 Per eseguire il programma è sufficiente scaricare l'eseguibile (.exe) e avviarlo.

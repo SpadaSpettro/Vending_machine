@@ -96,14 +96,14 @@ int main() {
    SetConsoleCP(CP_UTF8);
 
    //Pannello degli oggetti; proprietà in ordine: Nome, Quantità, Prezzo (in centesimi).
-   Articolo acqua("Acqua", 1, 50);
-   Articolo patatine("Patatine", 0, 100);
-   Articolo sprite("Sprite", 0, 100);
-   Articolo fanta("Fanta", 0, 100);
-   Articolo biscotti("Biscotti", 0, 100);
-   Articolo barretta_proteica("Barretta proteica", 0, 150);
-   Articolo caffe("Caffè", 1, 120);
-   Articolo succo_di_frutta("Succo di frutta", 0, 100);
+   Articolo acqua("Acqua", 20, 50);
+   Articolo patatine("Patatine", 20, 100);
+   Articolo sprite("Sprite", 20, 100);
+   Articolo fanta("Fanta", 20, 100);
+   Articolo biscotti("Biscotti", 20, 100);
+   Articolo barretta_proteica("Barretta proteica", 20, 150);
+   Articolo caffe("Caffè", 20, 120);
+   Articolo succo_di_frutta("Succo di frutta", 20, 100);
    
    //Variabili principali
    auto qttTotVarAppoggio=Articolo::getQttTot();
