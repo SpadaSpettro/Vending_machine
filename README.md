@@ -10,13 +10,10 @@ Questo programma simula l'interazione di un utente con un distributore automatic
 
 ###### Come avviare il programma:
 
-Per eseguire il programma è sufficiente scaricare l'eseguibile (.exe) e avviarlo.
-
-Windows o il browser potrebbero segnalarlo come rischioso: ciò è normale e deriva dalla mancanza di un certificato di attendibilità per il programma, ma è sicuro al 100%, cosa comunque verificabile eseguendo un'analisi antivirus del programma.
+Per avviare il programma, compilare il file Distributore automatico.cpp usando un compilatore C++ (come g++ o Visual Studio) e avviare l'eseguibile generato.
 
 
 
-Metodi e linguaggi utilizzati:
+### Metodi e linguaggi utilizzati:
 
 C++, OOP (Object Oriented Programming - Programmazione ad oggetti), strutture dati.
-
