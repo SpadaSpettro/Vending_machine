@@ -42,3 +42,10 @@
 
 # Compiling folder
 /.vscode
+/build
+/Debug
+
+# Text files
+*.log
+*.aux
+*.txt
