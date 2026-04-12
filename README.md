@@ -17,3 +17,6 @@ Per avviare il programma, compilare il file Distributore automatico.cpp usando u
 Metodi e linguaggi utilizzati:
 
 C++, OOP (Object Oriented Programming - Programmazione ad oggetti), strutture dati.
+
+## Download
+È possibile scaricare l'ultima versione compilata per Windows dalla sezione [Releases](https://github.com/SpadaSpettro/Distributore_automatico/releases).
