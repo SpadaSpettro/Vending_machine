@@ -20,7 +20,7 @@ class Articolo {
    Articolo(string n, int qtIniziale, int prz):nome(n), quantita(qtIniziale), prezzoCentesimi(prz) {
       if (qtIniziale > 0) {
          oggetti.push_back(this);
-         codice=oggetti.size();
+         codice=static_cast<int>(oggetti.size());
          qttTot+=qtIniziale;
       }
    }
@@ -157,7 +157,7 @@ int controllaInt() {
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
    }
    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-   return valore;
+   return static_cast<int>(valore);
 }
 
 double controllaDouble() {
