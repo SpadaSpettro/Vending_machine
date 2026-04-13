@@ -1,19 +1,20 @@
-###### Simulatore di distributore automatico (vending machine simulator)
+###### Vending Machine Simulator (simulatore di distributore automatico)
 
-Questo programma simula l'interazione di un utente con un distributore automatico, dalla visualizzazione e quantificazione degli articoli, alla richiesta degli articoli nella quantità scelta, al pagamento con vari tipi di euro (€).
+This program simulates a user's interaction with a vending machine, from viewing and quantifying items, to requesting items in the chosen quantity and paying with certain amounts of euros (€).
 
+###### 
 
+\-Items are represented by objects within the code. To manage the vending machine's items, refer to the "object panel" section.
 
-\-Gli articoli sono rappresentati da oggetti all'interno del codice. Per gestire gli articoli del distributore è sufficiente operare sul "pannello degli oggetti".
+###### 
 
+###### How to run the program:
 
+To run the program, compile the "Distributore\_automatico.cpp" file using a C++ compiler (such as g++ or Visual Studio) and run the generated executable.
 
-###### Come avviare il programma:
+###### 
 
-Per avviare il programma, compilare il file Distributore automatico.cpp usando un compilatore C++ (come g++ o Visual Studio) e avviare l'eseguibile generato.
+Methods and languages ​​used:
 
+C++, OOP (Object Oriented Programming), data structures.
 
-
-Metodi e linguaggi utilizzati:
-
-C++, OOP (Object Oriented Programming - Programmazione ad oggetti), strutture dati.
