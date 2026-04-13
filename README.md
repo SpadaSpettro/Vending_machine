@@ -4,7 +4,7 @@ This program simulates a user's interaction with a vending machine, from viewing
 
 
 
-\-Items are represented by objects within the code. To manage the vending machine's items, refer to the "object panel" section.
+* Items are represented by objects within the code. To manage the vending machine's items, refer to the "object panel" section.
 
 
 
@@ -21,4 +21,6 @@ C++, OOP (Object Oriented Programming), data structures.
 
 
 ## Download
+
 The last compiled version for Windows is available for download in the [Releases](https://github.com/SpadaSpettro/Distributore_automatico/releases) section.
+
