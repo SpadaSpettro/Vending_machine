@@ -22,5 +22,5 @@ C++, OOP (Object Oriented Programming), data structures.
 
 ## Download
 
-The last compiled version for Windows is available for download in the [Releases](https://github.com/SpadaSpettro/Distributore_automatico/releases) section.
+The latest compiled version for Windows is available for download in the [Releases](https://github.com/SpadaSpettro/Distributore_automatico/releases) section.
 
