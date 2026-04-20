@@ -240,7 +240,7 @@ int main()
          if (PIN == distributore.getPIN())
          {
             distributore.inventario();
-            cout << "Digita 1 per aggiungere un articolo, 2 per rimuovere un articolo, 3 per modificare un articolo, 4 per uscire dal menu Amministratore: ";
+            cout << "Digita \"1\" per aggiungere un articolo, \"2\" per rimuovere un articolo, \"3\" per modificare un articolo, \"4\" per uscire dal menu Amministratore: ";
             int scelta = controllaInputInt();
             switch (scelta)
             {
@@ -367,17 +367,23 @@ void gestisciTransazione(articolo &articolo)
       cout << "\nSiamo spiacenti, il prodotto è esaurito.\n\n";
       return;
    }
-   cout << format("\nCodice {}:\n", articolo.get_codice());
-   cout << format("{} {:.2f}€ - Quantità disponibile: {}\nScegliere la quantità desiderata: ", articolo.get_nome(), articolo.get_prz() / 100.0, articolo.get_qt());
+   cout << format("\nCodice {}:\n{} {:.2f}€ - Quantità disponibile: {}\nScegliere la quantità desiderata (digita \"0\" per annullare): ", articolo.get_codice(), articolo.get_nome(), articolo.get_prz() / 100.0, articolo.get_qt());
    int qt = controllaInputInt();
+   if (qt == 0)
+   {
+      return;
+   }
    controlloQt(qt, articolo);
    int totale = qt * articolo.get_prz();
-   cout << format("\nQuantità selezionata: {}. TOTALE: {:.2f}€.\n", qt, totale / 100.0);
-   cout << "*I tagli superiori a 20€ non verranno accettati.*\nInserire il denaro...\n";
+   cout << format("\nQuantità selezionata: {}. TOTALE: {:.2f}€.\n*I tagli superiori a 20€ non verranno accettati.*\nInserire il denaro... (digita \"0\" per annullare)\n", qt, totale / 100.0);
    auto pagato = 0;
    while (pagato < totale)
    {
       auto denaro = controllaInputDouble();
+      if (denaro == 0)
+      {
+         return;
+      }
       auto centesimi = static_cast<int>(round(denaro * 100));
       controlloTipo(centesimi);
       pagato += centesimi;
