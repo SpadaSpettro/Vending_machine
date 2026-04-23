@@ -1,61 +1,58 @@
-#define NOMINMAX
+#define NOMINMAX // Deactivates min e max Windows macros
 #include <iostream>
 #include <string>
 #ifdef _WIN32
-#include <Windows.h> // Necessaria per cambiare la codifica del terminale
+#include <Windows.h> // Used to change terminal's encoding
 #endif
-#include <cmath>
+#include <cmath> // For round() function
 #include <vector>
-#include <limits> //Necessaria per "numeric_limits"
+#include <limits> // Necessary for "numeric_limits"
 #include <format>
-#include <charconv> // Necessaria per "from_chars"
+#include <charconv> // Necessary for "from_chars"
 #include <string_view>
+
 using namespace std;
 
-class articolo // Gestisce unicamente i dati del singolo prodotto
+class art // Manages only the article data
 {
-   int codice;
-   string nome;
+   // Attributes
+   int code;
+   string name;
    int qt;
-   int przCentesimi;
+   int priceCent;
 
 public:
-   articolo(int codice, string nome, int qtIniziale, int prz) : codice(codice), nome(nome), qt(qtIniziale), przCentesimi(prz) {} // Costruttore
+   art(int code, string name, int qtStart, int price) : code(code), name(name), qt(qtStart), priceCent(price) {} // Constructor
 
-   // Metodi di accesso agli attributi
-   void set_qt(int qtAcquistata)
+   // Attributes access methods
+   void set_code(int newCode)
    {
-      qt -= qtAcquistata;
+      code = newCode;
    }
 
-   void set_qtMod(int nuovaQt)
+   int get_code() const
    {
-      qt = nuovaQt;
+      return code;
    }
 
-   void set_codice(int nuovoCodice)
+   void set_name(string newName)
    {
-      codice = nuovoCodice;
+      name = newName;
    }
 
-   void set_prz(int nuovoPrz)
+   string get_name() const
    {
-      przCentesimi = nuovoPrz;
+      return name;
    }
 
-   void set_nome(string nuovoNome)
+   void set_qt(int qtBought)
    {
-      nome = nuovoNome;
+      qt -= qtBought;
    }
 
-   void getAttrsEsposizione() const
+   void set_qtMod(int newQt)
    {
-      cout << format("Codice: {} - {} {:.2f}€\n", codice, nome, przCentesimi / 100.0);
-   }
-
-   string get_nome() const
-   {
-      return nome;
+      qt = newQt;
    }
 
    int get_qt() const
@@ -63,78 +60,63 @@ public:
       return qt;
    }
 
-   int get_prz() const
+   void set_price(int newPrice)
    {
-      return przCentesimi;
+      priceCent = newPrice;
    }
 
-   int get_codice() const
+   int get_price() const
    {
-      return codice;
+      return priceCent;
+   }
+
+   void getAttrsExpo() const // Shows code, name and price of an article
+   {
+      cout << format("Code: {} - {} {:.2f}€\n", code, name, priceCent / 100.0); // Price is calculated in cents, but it's shown in € by dividing by 100.0 (to ensure a type:double result), with 2 floating digits
    }
 };
 
-// Dichiarazione funzioni
-void controlloTipo(int &centesimi);
-void controlloQt(int &qt, articolo articolo);
-int controllaInputInt();
-double controllaInputDouble();
-void gestisciTransazione(articolo &articolo);
+// Functions declaration
+void typeCheck(int &cents);     // Checks the denomination of the money
+void qtCheck(int &qt, art art); // Checks the selected quantity
+int inputInt_check();           // Check the input where integer
+double inputDouble_check();     // Checks the input where decimal
+void manageTransaction(art &art);
 
-class distributoreAutomatico // Gestisce l'inventario e le transazioni
+class vendingMachine // Manages inventory and transactions
 {
-   vector<articolo> articoli;
-   const int PIN = 50778133; // Codice per accedere all'inventario
-   static int incassi;
+   // Attributes
+   vector<art> arts;
+   const int PIN = 50778133; // Inventory access code
+   static int earnings;
 
 public:
-   void aggiungiArticolo(string nome, int qtIniziale, int prz)
+   void addArt(string name, int qtStart, int price) // Adds an item to the vector after creating it using the constructor of the class "art"
    {
-      if (qtIniziale > 0)
+      if (qtStart > 0)
       {
-         articoli.emplace_back((static_cast<int>(articoli.size()) + 1), nome, qtIniziale, prz);
+         arts.emplace_back((static_cast<int>(arts.size()) + 1), name, qtStart, price);
       }
    }
 
-   articolo *getArticolo(int codice)
+   art *getArt(int code) // Gets an item of the vector based on the code
    {
-      return &articoli.at(codice - 1);
-   }
-
-   void esposizione() const
-   {
-      cout << "\nQuesto è un distributore automatico. Ecco la lista degli articoli acquistabili con i relativi codici:\n";
-      for (const auto articolo : articoli)
-      {
-         if (articolo.get_qt() > 0)
-         {
-            articolo.getAttrsEsposizione();
-         }
-      }
-   }
-
-   void inventario() const
-   {
-      for (const auto articolo : articoli)
-      {
-         cout << format("{}: {} disponibili.\n", articolo.get_nome(), articolo.get_qt());
-      }
-      cout << format("\nIncassi totali: {:.2f}€.\n", incassi / 100.0) << endl;
+      return &arts.at(code - 1);
    }
 
    auto get_qtTot() const
    {
       auto qtTot = 0;
-      for (const auto articolo : articoli)
+      for (const auto art : arts)
       {
-         qtTot += articolo.get_qt();
+         qtTot += art.get_qt();
       }
       return qtTot;
    }
 
-   int getNumArticoli() const
+   int getHowManyArts() const
    {
-      return static_cast<int>(articoli.size());
+      return static_cast<int>(arts.size());
    }
 
    int getPIN() const
@@ -142,193 +124,196 @@ public:
       return PIN;
    }
 
-   void rimuoviArticolo(int codice)
+   void expo() const // Shows the list of the articles
    {
-      if (codice > 0 && codice <= articoli.size())
+      cout << "\nThis is a vending machine. Here's the list of purchasable articles with the respective codes:\n";
+      for (const auto art : arts)
       {
-         articoli.erase(articoli.begin() + codice - 1);
-         for (auto i = codice - 1; i < articoli.size(); i++)
+         if (art.get_qt() > 0)
          {
-            articoli.at(i).set_codice(i + 1);
+            art.getAttrsExpo();
+         }
+      }
+   }
+
+   void inventory() const
+   {
+      for (const auto art : arts)
+      {
+         cout << format("{}: {} available.\n", art.get_name(), art.get_qt());
+      }
+      cout << format("\nTotal earnings: {:.2f}€.\n", earnings / 100.0) << endl;
+   }
+
+   void delArt(int code)
+   {
+      if (code > 0 && code <= arts.size())
+      {
+         arts.erase(arts.begin() + code - 1); // Removes the item at the specified position of the vector, based on the code
+
+         // Resets the articles codes, starting from the position of the removed item
+         for (auto i = code - 1; i < arts.size(); i++)
+         {
+            arts.at(i).set_code(i + 1);
          }
       }
       else
       {
-         cout << "Codice non valido.\n";
+         cout << "Invalid code.\n";
       }
    }
 
-   void modificaArticolo(int codice)
+   void modArt(int code)
    {
-      if (codice > 0 && codice <= articoli.size())
+      if (code > 0 && code <= arts.size())
       {
-         articolo *articolo = getArticolo(codice);
-         cout << format("\nInserisci il nuovo nome dell'articolo, digita \"=\" per mantenere quello attuale.\nNome attuale: {}.\nNuovo nome: ", articolo->get_nome());
-         string nuovoNome;
-         getline(cin, nuovoNome);
-         if (nuovoNome != "=")
+         art *art = getArt(code);
+         cout << format("\nWrite the new name of the article, type \"=\" to keep the current one.\nCurrent name: {}.\nNew name: ", art->get_name());
+         string newName;
+         getline(cin, newName);
+         if (newName != "=")
          {
-            articolo->set_nome(nuovoNome);
+            art->set_name(newName);
          }
-         cout << format("\nInserisci la quantità, digita \"-1\" per mantenere quella attuale.\nQuantità attuale: {}.\nNuova quantità: ", articolo->get_qt());
-         int nuova_qt = controllaInputInt();
-         if (nuova_qt > -1)
+         cout << format("\nPut in the quantity, type \"-1\" to keep the current one.\nCurrent quantity: {}.\nNew quantity: ", art->get_qt());
+         int new_qt = inputInt_check();
+         if (new_qt > -1) // It is possible to set the new quantity to 0. This allows to keep the existing article without showing it
          {
-            articolo->set_qtMod(nuova_qt);
-         }
-         else
-         {
-            cout << "Quantità non valida.Verrà mantenuta quella attuale.\n";
-         }
-         cout << format("\nInserisci il nuovo prezzo dell'articolo (in centesimi), digita \"-1\" per mantenere quello attuale.\nPrezzo attuale: {}.\nNuovo prezzo: ", articolo->get_prz());
-         int nuovo_prz = controllaInputInt();
-         if (nuovo_prz >= 0)
-         {
-            articolo->set_prz(nuovo_prz);
+            art->set_qtMod(new_qt);
          }
          else
          {
-            cout << "Prezzo non valido. Verrà mantenuto quello attuale.\n";
+            cout << "Invalid quantity. The current one will be kept.\n";
+         }
+         cout << format("\nType in the new price for the article (in cents), type \"-1\" to keep the current one.\nCurrent price: {}.\nNew price: ", art->get_price());
+         int new_price = inputInt_check();
+         if (new_price >= 0)
+         {
+            art->set_price(new_price);
+         }
+         else
+         {
+            cout << "Invalid price. The current one will be kept.\n";
          }
       }
       else
       {
-         cout << "Codice non valido.\n";
+         cout << "Invalid code.\n";
       }
    }
 
-   // Metodi static per gestire gli incassi del distributore
-   static void set_incassi(int incasso)
+   // Static method for managing earnings
+   static void set_earnings(int earning)
    {
-      incassi += incasso;
+      earnings += earning;
    }
 };
-int distributoreAutomatico::incassi = 0; // Inizializzazione variabile statica
+int vendingMachine::earnings = 0; // Static variable initialization
 
 int main()
 {
 #ifdef _WIN32
-   // Forza il terminale a usare la codifica UTF-8
+   // Forces terminal to use UTF-8 encoding
    SetConsoleOutputCP(CP_UTF8);
    SetConsoleCP(CP_UTF8);
 #endif
+   vendingMachine dispenser; // Creates an object of the class "vendingMachine" to access the class methods
+   // Articles panel; attributes in order: Name, Quantity, Price (in cents).
+   dispenser.addArt("Water", 20, 50);
+   dispenser.addArt("Chips", 20, 100);
+   dispenser.addArt("Sprite", 20, 100);
+   dispenser.addArt("Fanta", 20, 100);
+   dispenser.addArt("Biscuits", 20, 100);
+   dispenser.addArt("Protein bar", 20, 150);
+   dispenser.addArt("Coffee", 20, 120);
+   dispenser.addArt("Apple juice", 20, 100);
 
-   distributoreAutomatico distributore;
-   // Pannello degli articoli; attributi in ordine: Nome, Quantità, Prezzo (in centesimi).
-   distributore.aggiungiArticolo("Acqua", 20, 50);
-   distributore.aggiungiArticolo("Patatine", 20, 100);
-   distributore.aggiungiArticolo("Sprite", 20, 100);
-   distributore.aggiungiArticolo("Fanta", 20, 100);
-   distributore.aggiungiArticolo("Biscotti", 20, 100);
-   distributore.aggiungiArticolo("Barretta proteica", 20, 150);
-   distributore.aggiungiArticolo("Caffè", 20, 120);
-   distributore.aggiungiArticolo("Succo di frutta", 20, 100);
-
-   while (distributore.get_qtTot() > 0)
+   while (dispenser.get_qtTot() > 0) // Every time the function is called, it dynamically calculates the qtTot
    {
-      distributore.esposizione();
-      // Verifica quantità totale articoli (per testing del programma).
-      // cout << format("Quantità totale articoli: {}.", distributore.get_qtTot()) << endl;
+      dispenser.expo();
+      // Verify articles total quantity (for program testing).
+      // cout << format("Articles total quantity: {}.", dispenser.get_qtTot()) << endl;
 
-      cout << "\nInserire il codice del prodotto desiderato: ";
-      int codice = controllaInputInt();
-      if (codice == 999)
+      cout << "\nEnter the desired product code: ";
+      int code = inputInt_check();
+      if (code == 999) // Secret code
       {
-         cout << "Inserisci il PIN: ";
-         int PIN = controllaInputInt();
+         cout << "Enter the PIN: ";
+         int PIN = inputInt_check();
          cout << endl;
-         if (PIN == distributore.getPIN())
+         if (PIN == dispenser.getPIN())
          {
-            distributore.inventario();
-            cout << "Digita \"1\" per aggiungere un articolo, \"2\" per rimuovere un articolo, \"3\" per modificare un articolo, \"4\" per uscire dal menu Amministratore: ";
-            int scelta = controllaInputInt();
-            switch (scelta)
+            // The Admin console allows to manage articles during execution time
+            dispenser.inventory(); // Shows inventory
+            cout << "Enter \"1\" to add a new article, \"2\" to remove an existing article, \"3\" to modify an existing article, \"4\" to exit Admin console: ";
+            int selection = inputInt_check();
+            switch (selection)
             {
             case 1:
             {
-               cout << "Inserisci il nome dell'articolo da aggiungere: ";
-               string nome;
-               getline(cin, nome);
-               cout << "Inserisci la quantità (>0): ";
-               int qtIniziale = controllaInputInt();
-               cout << "Inserisci il prezzo dell'articolo (in centesimi): ";
-               int prz = controllaInputInt();
-               distributore.aggiungiArticolo(nome, qtIniziale, prz);
+               cout << "Enter the name of the new article: ";
+               string name;
+               getline(cin, name);
+               cout << "Put in the quantity (>0): "; // If the quantity is not >0, the item is not created
+               int qtStart = inputInt_check();
+               cout << "Type in the article price (in cents): ";
+               int price = inputInt_check();
+               dispenser.addArt(name, qtStart, price); // Creates the new article
                break;
             }
             case 2:
             {
-               cout << "Inserisci il codice dell'articolo da rimuovere: ";
-               int codiceRimozione = controllaInputInt();
-               distributore.rimuoviArticolo(codiceRimozione);
+               cout << "Enter the code of the article you want to remove: ";
+               int removalCode = inputInt_check();
+               dispenser.delArt(removalCode); // Removes the specified article
                break;
             }
             case 3:
             {
-               cout << "Inserisci il codice dell'articolo da modificare: ";
-               int codiceModifica = controllaInputInt();
-               distributore.modificaArticolo(codiceModifica);
+               cout << "Enter the code of the article you want to modify: ";
+               int modCode = inputInt_check();
+               dispenser.modArt(modCode); // Modifies the specified article
                break;
             }
             case 4:
-               break;
+               break; // Exits the Admin console
             default:
-               cout << "Scelta non valida.\n";
+               cout << "Invalid input.\n";
             }
          }
          else
          {
-            cout << "Codice PIN errato.\n"
+            cout << "The PIN is not correct!\n"
                  << endl;
-            continue;
+            continue; // Skips to the next iteration
          }
       }
-      else if (codice > 0 && codice <= distributore.getNumArticoli())
+      else if (code > 0 && code <= dispenser.getHowManyArts())
       {
-         articolo *articoloScelto = distributore.getArticolo(codice);
-         gestisciTransazione(*articoloScelto);
+         art *chosenArt = dispenser.getArt(code);
+         manageTransaction(*chosenArt);
       }
       else
       {
-         cout << "Codice non valido.\n\n";
+         cout << "Invalid code.\n\n";
       }
    }
-   cout << "TUTTO ESAURITO\n";
+   cout << "SOLD OUT\n";
 
+   // Stalls the execution until the user presses ENTER
    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-   cout << "Premi INVIO per uscire...";
+   cout << "Press ENTER to exit the program...";
    cin.get();
    return 0;
 }
 
-// Definizione funzioni
-void controlloTipo(int &centesimi)
-{
-   while (centesimi != 10 && centesimi != 20 && centesimi != 50 && centesimi != 100 && centesimi != 200 && centesimi != 500 && centesimi != 1000 && centesimi != 2000)
-   {
-      cout << "Denaro non riconosciuto. Riprovare..." << endl;
-      auto denaro = controllaInputDouble();
-      centesimi = static_cast<int>(round(denaro * 100));
-   }
-}
-
-void controlloQt(int &qt, articolo articolo)
-{
-   while (qt < 1 || qt > articolo.get_qt())
-   {
-      cout << "Quantità non valida. Riprovare...\n"
-           << endl;
-      cout << "Scegliere la quantità desiderata: ";
-      qt = controllaInputInt();
-   }
-}
-
-int controllaInputInt()
+// Functions definition
+int inputInt_check()
 {
    double input = 0;
    while (!(cin >> input) || input != static_cast<int>(input))
    {
-      cout << "Errore. Valore non riconosciuto. Riprovare: ";
+      cout << "Error. Unrecognized input. Try again: ";
       cin.clear();
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
    }
@@ -336,73 +321,94 @@ int controllaInputInt()
    return static_cast<int>(input);
 }
 
-double controllaInputDouble()
+double inputDouble_check()
 {
-   string riga = "";
+   string row = "";
    double input = 0.0;
    while (true)
    {
-      if (!getline(cin, riga) || riga.empty())
+      if (!getline(cin, row) || row.empty())
       {
          continue;
       }
-      // "from_chars" converte la stringa.
-      // Questa funzione dice esattamente dove si è fermata la lettura.
-      auto [ptr, ec] = from_chars(riga.data(), riga.data() + riga.size(), input);
+      // "from_chars" converts the string.
+      // This function points exactly where the reading stopped.
+      auto [ptr, ec] = from_chars(row.data(), row.data() + row.size(), input);
 
-      // ec == errc{}: non ci sono stati errori di conversione (es. overflow o nessuna cifra).
-      // ptr == riga.data() + riga.size(): la lettura è arrivata alla FINE della stringa.
-      if (ec == errc{} && ptr == riga.data() + riga.size())
+      // ec == errc{}: there were no conversion errors (e.g. overflow or no number).
+      // ptr == row.data() + row.size(): the reading reached the END of the string.
+      if (ec == errc{} && ptr == row.data() + row.size())
       {
-         return input; // Input perfettamente pulito!
+         return input; // Perfectly clean input!
       }
-      cout << "Errore. Valore non riconosciuto. Riprovare: ";
+      cout << "Error. Unrecognized input. Try again: ";
    }
 }
 
-void gestisciTransazione(articolo &articolo)
+void typeCheck(int &cents)
 {
-   if (articolo.get_qt() < 1)
+   while (cents != 10 && cents != 20 && cents != 50 && cents != 100 && cents != 200 && cents != 500 && cents != 1000 && cents != 2000) // List of allowed denominations
    {
-      cout << "\nSiamo spiacenti, il prodotto è esaurito.\n\n";
-      return;
+      cout << "Money not recognized. Try again..." << endl;
+      auto money = inputDouble_check();
+      cents = static_cast<int>(round(money * 100)); // Every time money is inserted, it's transformed into cents to allow easier calculations. This is the standard when working with money and eliminates aproximation errors
    }
-   cout << format("\nCodice {}:\n{} {:.2f}€ - Quantità disponibile: {}\nScegliere la quantità desiderata (digita \"0\" per annullare): ", articolo.get_codice(), articolo.get_nome(), articolo.get_prz() / 100.0, articolo.get_qt());
-   int qt = controllaInputInt();
+}
+
+void qtCheck(int &qt, art art)
+{
+   while (qt < 1 || qt > art.get_qt())
+   {
+      cout << "Invalid quantity. Try again...\n"
+           << endl;
+      cout << "Choose the desired quantity: ";
+      qt = inputInt_check();
+   }
+}
+
+void manageTransaction(art &art)
+{
+   if (art.get_qt() < 1)
+   {
+      cout << "\nSorry, the product is out of stock.\n\n";
+      return; // Terminates the function if the article is no more available
+   }
+   cout << format("\nCode {}:\n{} {:.2f}€ - Available quantity: {}\nSelect the desired quantity (type \"0\" to cancel): ", art.get_code(), art.get_name(), art.get_price() / 100.0, art.get_qt());
+   int qt = inputInt_check();
    if (qt == 0)
    {
-      return;
+      return; // Typing "0" cancels the transaction
    }
-   controlloQt(qt, articolo);
-   int totale = qt * articolo.get_prz();
-   cout << format("\nQuantità selezionata: {}. TOTALE: {:.2f}€.\n*I tagli superiori a 20€ non verranno accettati.*\nInserire il denaro... (digita \"0\" per annullare)\n", qt, totale / 100.0);
-   auto pagato = 0;
-   while (pagato < totale)
+   qtCheck(qt, art);
+   int tot = qt * art.get_price();
+   cout << format("\nSelected quantity: {}. TOTAL: {:.2f}€.\n*Denominations higher than 20€ will not be accepted.*\nInsert money... (type \"0\" to cancel)\n", qt, tot / 100.0);
+   auto payed = 0; // Initializes the variable to start the payment process
+   while (payed < tot)
    {
-      auto denaro = controllaInputDouble();
-      if (denaro == 0)
+      auto money = inputDouble_check();
+      if (money == 0)
       {
-         return;
+         return; // Typing "0" cancels the transaction
       }
-      auto centesimi = static_cast<int>(round(denaro * 100));
-      controlloTipo(centesimi);
-      pagato += centesimi;
-      if (pagato < totale)
+      auto cents = static_cast<int>(round(money * 100));
+      typeCheck(cents);
+      payed += cents;
+      if (payed < tot)
       {
-         cout << format("Pagato: {:.2f}€, rimanente: {:.2f}€.\nInserire altro denaro...\n", pagato / 100.0, (totale - pagato) / 100.0);
+         cout << format("Payed: {:.2f}€, remaining: {:.2f}€.\nInsert more money...\n", payed / 100.0, (tot - payed) / 100.0);
       }
    }
    cout << "------------------------------" << endl;
-   if (pagato > totale)
+   if (payed > tot)
    {
-      cout << format("Ecco i suoi prodotti. Il resto è {:.2f}€.\n", (pagato - totale) / 100.0);
+      cout << format("Here are your products. The change is {:.2f}€.\n", (payed - tot) / 100.0);
    }
    else
    {
-      cout << "Ecco i suoi prodotti. ";
+      cout << "Here are your products. ";
    }
-   cout << "Buona giornata :)\n"
+   cout << "Have a nice day :)\n"
         << endl;
-   distributoreAutomatico::set_incassi(totale);
-   articolo.set_qt(qt);
+   vendingMachine::set_earnings(tot); // Counts the total as earnings
+   art.set_qt(qt);                    // Reduces the article quantity
 }
