@@ -79,7 +79,7 @@ public:
 // Functions declaration
 void typeCheck(int &cents);     // Checks the denomination of the money
 void qtCheck(int &qt, art art); // Checks the selected quantity
-int inputInt_check();           // Check the input where integer
+int inputInt_check();           // Checks the input where integer
 double inputDouble_check();     // Checks the input where decimal
 void manageTransaction(art &art);
 
