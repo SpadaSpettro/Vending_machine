@@ -95,7 +95,7 @@ public:
    {
       if (qtStart > 0)
       {
-         arts.emplace_back((static_cast<int>(arts.size()) + 1), name, qtStart, price);
+         arts.emplace_back((static_cast<int>(arts.size()) + 1), name, qtStart, price); // The casting avoids compiling warnings regarding strange type conversions
       }
    }
 
@@ -318,7 +318,7 @@ int inputInt_check()
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
    }
    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-   return static_cast<int>(input);
+   return static_cast<int>(input); 
 }
 
 double inputDouble_check()
