@@ -323,21 +323,21 @@ int inputInt_check()
 
 double inputDouble_check()
 {
-   string row = "";
+   string line = "";
    double input = 0.0;
    while (true)
    {
-      if (!getline(cin, row) || row.empty())
+      if (!getline(cin, line) || line.empty())
       {
          continue;
       }
       // "from_chars" converts the string.
       // This function points exactly where the reading stopped.
-      auto [ptr, ec] = from_chars(row.data(), row.data() + row.size(), input);
+      auto [ptr, ec] = from_chars(line.data(), line.data() + line.size(), input);
 
       // ec == errc{}: there were no conversion errors (e.g. overflow or no number).
-      // ptr == row.data() + row.size(): the reading reached the END of the string.
-      if (ec == errc{} && ptr == row.data() + row.size())
+      // ptr == line.data() + line.size(): the reading reached the END of the string.
+      if (ec == errc{} && ptr == line.data() + line.size())
       {
          return input; // Perfectly clean input!
       }
