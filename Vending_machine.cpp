@@ -99,7 +99,7 @@ public:
       }
    }
 
-   art *getArt(int code) // Gets an item of the vector based on the code
+   art* getArt(int code) // Gets an item of the vector based on the code
    {
       return &arts.at(code - 1);
    }
